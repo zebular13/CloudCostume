@@ -5,16 +5,16 @@ byte PINA = 6; //Cloud one Data input pin hooked up to pin 6
 
 
 byte BUTTON_PIN = 3;    // Digital IO pin connected to the button.  This will be
-// driven with a pull-up resistor so the switch should
-// pull the pin to ground momentarily.  On a high -> low
-// transition the button press logic will execute.
+                          // driven with a pull-up resistor so the switch should
+                          // pull the pin to ground momentarily.  On a high -> low
+                          // transition the button press logic will execute.
 
 byte POT_PIN = 7;
 
-long reading = 0; //set the potentiometer value to zero
+int reading = 0; //set the potentiometer value to zero
 
 unsigned long previousMillis = 0;
-const long interval = 100;
+const long interval = 100; 
 
 // Parameter 1 = number of pixels in strip
 // Parameter 2 = Arduino pin number (most are valid)
@@ -24,6 +24,7 @@ const long interval = 100;
 //   NEO_GRB     Pixels are wired for GRB bitstream (most NeoPixel products)
 //   NEO_RGB     Pixels are wired for RGB bitstream (v1 FLORA pixels, not v2)
 Adafruit_NeoPixel strip_a = Adafruit_NeoPixel(300, PINA, NEO_GRB + NEO_KHZ800);
+
 
 bool oldState = HIGH;
 int showType = 0;
@@ -40,7 +41,7 @@ void setup() {
 
   pinMode(BUTTON_PIN, INPUT_PULLUP);
   pinMode(POT_PIN, INPUT);
-  //  attachInterrupt(1, change, RISING);
+  attachInterrupt(1, change, RISING);
   Serial.begin(9600);
   // This is for Trinket 5V 16MHz, you can remove these three lines if you are not using a Trinket
 #if defined (__AVR_ATtiny85__)
@@ -48,32 +49,30 @@ void setup() {
 #endif
   // End of trinket special code
 
-  strip_a.begin();
+  strip_a.begin(); 
   strip_a.show(); // Initialize all pixels in cloud to 'off'
 }
 
 void loop() {
   unsigned long currentMillis = millis();
-
-  reading  = analogRead(POT_PIN);
-  Serial.println(reading);
-  if (currentMillis - previousMillis >= interval) {
-    previousMillis = currentMillis;
-
-  }
   reset = 0;
   startShow();
+  if (currentMillis - previousMillis >= interval) {
+    previousMillis = currentMillis;
+    reading  = analogRead(POT_PIN);
+    Serial.println(reading);
+  }
 }
 
 
-//void change(){
-//  delayMicroseconds(1500000);
-//  showType = showType + 1;
-//      if (showType > 9){
-//        showType=0;
-//      }
-//  reset = 1;
-//}
+void change(){
+  delayMicroseconds(1500000);
+  showType = showType + 1;
+      if (showType > 9){
+        showType=0;
+      }
+  reset = 1;
+}
 
 void startShow() {
   if ( reading < 50 )
@@ -131,35 +130,35 @@ void startShow() {
   }
 }
 
-//void startShow(int L) {
-//  switch(L){
-//    case 0: clearCloud();  // Function turns all the LEDs in the clouds off
-//            break;
-//    case 1: blueSky();     // Function that sets the clouds blue
-//            break;
-//    case 2: nighttime(400); //Function that sets the clouds to a dark blue color
-//            break;
-//    case 3: clearCloud();
-//            theaterChase(strip_a.Color(127, 127, 127), 100);
-//            // Function that makes a white theatre crawl type lighting siduation
-//            break;
-//    case 4: rainbow(20);  // Function that slowly scrolls ranbows actross the clouds
-//            break;
-//    case 5: sunSet();    // Function that sets the clouds red/orange/yellow
-//            break;
-//    case 6: clearCloud();
-//            theaterChase(strip_a.Color(  0,   0, 127), 50); // Blue
-//            break;
-//    case 7: clearCloud();
-//            lightningStorm();  // Function that makes what looks like a lightning storm
-//            break;
-//    case 8: whiteClouds(); // Function that sets the clouds white
-//            break;
-//    case 9: clearCloud();
-//            disco(85, 100); // Function that makes the clouds look like a colorful disco
-//            break;
-//  }
-//}
+void startShow(int L) {
+  switch(L){
+    case 0: clearCloud();  // Function turns all the LEDs in the clouds off
+            break;
+    case 1: blueSky();     // Function that sets the clouds blue
+            break;
+    case 2: nighttime(400); //Function that sets the clouds to a dark blue color
+            break;
+    case 3: clearCloud();
+            theaterChase(strip_a.Color(127, 127, 127), 100); 
+            // Function that makes a white theatre crawl type lighting siduation
+            break;
+    case 4: rainbow(20);  // Function that slowly scrolls ranbows actross the clouds
+            break;
+    case 5: sunSet();    // Function that sets the clouds red/orange/yellow
+            break;
+    case 6: clearCloud();
+            theaterChase(strip_a.Color(  0,   0, 127), 50); // Blue
+            break;
+    case 7: clearCloud();
+            lightningStorm();  // Function that makes what looks like a lightning storm
+            break;
+    case 8: whiteClouds(); // Function that sets the clouds white
+            break;
+    case 9: clearCloud();
+            disco(85, 100); // Function that makes the clouds look like a colorful disco
+            break;
+  }
+}
 
 
 
