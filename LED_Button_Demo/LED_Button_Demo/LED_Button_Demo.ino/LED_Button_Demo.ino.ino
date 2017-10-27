@@ -75,20 +75,58 @@ void change(){
 }
 
 void startShow() {
-  if( reading < 100 )
+  if ( reading < 50 )
   {
-    sunSet();  // Function turns all the LEDs in the clouds off
+    clearCloud();  // Function turns all the LEDs in the clouds off
   }
-  if( reading >= 100 )
+  if ( reading >= 50 )
   {
-    if( reading < 300 )
+    if ( reading < 60 )
     {
-     blueSky();     // Function that sets the clouds blue
+      blueSky();     // Function that sets the clouds blue
     }
   }
-  if( reading > 300 )
+  if ( reading >= 60 )
   {
-    theaterChase(strip_a.Color(127, 127, 127), 100); 
+    if ( reading < 70 )
+    {
+      sunSet();     // Function that makes an orange sunset
+    }
+  }
+  if ( reading >= 70 )
+  {
+    if ( reading < 80 )
+    {
+      clearCloud();
+      lightningStorm();  // Function that makes what looks like a lightning storm
+    }
+  }
+  if ( reading >= 80 )
+  {
+    if ( reading < 90 )
+    {
+      clearCloud();
+      theaterChase(strip_a.Color(127, 127, 127), 100); // Function that makes a white theatre crawl type lighting siduation
+    }
+  }
+  if ( reading >= 90 )
+  {
+    if ( reading < 100 )
+    {
+      clearCloud();
+      theaterChase(strip_a.Color(  0,   0, 127), 50); // Blue
+    }
+  }
+  if ( reading >= 100 )
+  {
+    if ( reading < 110 )
+    {
+      nighttime(400);     // dark blue
+    }
+  }
+  if ( reading > 110 )
+  {
+    whiteClouds(); // Function that sets the clouds white
   }
 }
 
