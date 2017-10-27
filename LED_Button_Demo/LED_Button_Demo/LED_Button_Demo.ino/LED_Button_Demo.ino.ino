@@ -11,7 +11,7 @@ byte BUTTON_PIN = 3;    // Digital IO pin connected to the button.  This will be
 
 byte POT_PIN = 7;
 
-long reading = 0; //set the potentiometer value to zero
+int reading = 0; //set the potentiometer value to zero
 
 unsigned long previousMillis = 0;
 const long interval = 100; 
@@ -24,6 +24,7 @@ const long interval = 100;
 //   NEO_GRB     Pixels are wired for GRB bitstream (most NeoPixel products)
 //   NEO_RGB     Pixels are wired for RGB bitstream (v1 FLORA pixels, not v2)
 Adafruit_NeoPixel strip_a = Adafruit_NeoPixel(300, PINA, NEO_GRB + NEO_KHZ800);
+
 
 bool oldState = HIGH;
 int showType = 0;
@@ -40,7 +41,7 @@ void setup() {
 
   pinMode(BUTTON_PIN, INPUT_PULLUP);
   pinMode(POT_PIN, INPUT);
-//  attachInterrupt(1, change, RISING);
+  attachInterrupt(1, change, RISING);
   Serial.begin(9600);
   // This is for Trinket 5V 16MHz, you can remove these three lines if you are not using a Trinket
 #if defined (__AVR_ATtiny85__)
@@ -54,112 +55,72 @@ void setup() {
 
 void loop() {
   unsigned long currentMillis = millis();
-  
-  reading  = analogRead(POT_PIN);
-  Serial.println(reading);
-  if (currentMillis - previousMillis >= interval) {
-    previousMillis = currentMillis;
-    
-  }
   reset = 0;
   startShow();
+  if (currentMillis - previousMillis >= interval) {
+    previousMillis = currentMillis;
+    reading  = analogRead(POT_PIN);
+    Serial.println(reading);
+  }
 }
 
 
-//void change(){
-//  delayMicroseconds(1500000);
-//  showType = showType + 1;
-//      if (showType > 9){
-//        showType=0;
-//      }
-//  reset = 1;
-//}
+void change(){
+  delayMicroseconds(1500000);
+  showType = showType + 1;
+      if (showType > 9){
+        showType=0;
+      }
+  reset = 1;
+}
 
 void startShow() {
-  if( reading < 50 )
+  if( reading < 100 )
   {
-    clearCloud();  // Function turns all the LEDs in the clouds off
+    sunSet();  // Function turns all the LEDs in the clouds off
   }
-  if( reading >= 50 )
+  if( reading >= 100 )
   {
-    if( reading < 100 )
+    if( reading < 300 )
     {
      blueSky();     // Function that sets the clouds blue
     }
   }
-  if( reading >= 100 )
+  if( reading > 300 )
   {
-    if( reading < 150 )
-    {
-     sunSet();     // Function that makes an orange sunset
-    }
-  }
-   if( reading >= 150 )
-  {
-    if( reading < 200 )
-    {
-     clearCloud();
-     lightningStorm();  // Function that makes what looks like a lightning storm
-    }
-  }
-     if( reading >= 200 )
-  {
-    if( reading < 250 )
-    {
-     clearCloud();
-     theaterChase(strip_a.Color(127, 127, 127), 100); // Function that makes a white theatre crawl type lighting siduation
-    }
-  }
-     if( reading >= 250 )
-  {
-    if( reading < 300 )
-    {
-     clearCloud();
-     theaterChase(strip_a.Color(  0,   0, 127), 50); // Blue
-    }
-  }
-     if( reading >= 300 )
-  {
-    if( reading < 350 )
-    {
-     nighttime(400);     // dark blue
-    }
-  }
-  if( reading > 350 )
-  {
-    whiteClouds(); // Function that sets the clouds white
+    theaterChase(strip_a.Color(127, 127, 127), 100); 
   }
 }
 
-//void startShow(int L) {
-//  switch(L){
-//    case 0: clearCloud();  // Function turns all the LEDs in the clouds off
-//            break;
-//    case 1: blueSky();     // Function that sets the clouds blue
-//            break;
-//    case 2: nighttime(400); //Function that sets the clouds to a dark blue color
-//            break;
-//    case 3: clearCloud();
-//            theaterChase(strip_a.Color(127, 127, 127), 100); 
-//            // Function that makes a white theatre crawl type lighting siduation
-//            break;
-//    case 4: rainbow(20);  // Function that slowly scrolls ranbows actross the clouds
-//            break;
-//    case 5: sunSet();    // Function that sets the clouds red/orange/yellow
-//            break;
-//    case 6: clearCloud();
-//            theaterChase(strip_a.Color(  0,   0, 127), 50); // Blue
-//            break;
-//    case 7: clearCloud();
-//            lightningStorm();  // Function that makes what looks like a lightning storm
-//            break;
-//    case 8: whiteClouds(); // Function that sets the clouds white
-//            break;
-//    case 9: clearCloud();
-//            disco(85, 100); // Function that makes the clouds look like a colorful disco
-//            break;
-//  }
-//}
+void startShow(int L) {
+  switch(L){
+    case 0: clearCloud();  // Function turns all the LEDs in the clouds off
+            break;
+    case 1: blueSky();     // Function that sets the clouds blue
+            break;
+    case 2: nighttime(400); //Function that sets the clouds to a dark blue color
+            break;
+    case 3: clearCloud();
+            theaterChase(strip_a.Color(127, 127, 127), 100); 
+            // Function that makes a white theatre crawl type lighting siduation
+            break;
+    case 4: rainbow(20);  // Function that slowly scrolls ranbows actross the clouds
+            break;
+    case 5: sunSet();    // Function that sets the clouds red/orange/yellow
+            break;
+    case 6: clearCloud();
+            theaterChase(strip_a.Color(  0,   0, 127), 50); // Blue
+            break;
+    case 7: clearCloud();
+            lightningStorm();  // Function that makes what looks like a lightning storm
+            break;
+    case 8: whiteClouds(); // Function that sets the clouds white
+            break;
+    case 9: clearCloud();
+            disco(85, 100); // Function that makes the clouds look like a colorful disco
+            break;
+  }
+}
 
 
 
@@ -175,7 +136,6 @@ void colorWheel(int Red, int Green, int Blue){
 
 //Rainbow function:
 void rainbow(uint8_t wait) {
-  unsigned long currentMillis = millis();
   while(reset != 1){  
       uint16_t i, j;
       for(j=0; j<256; j++) {                       //for 256 colors
@@ -183,11 +143,8 @@ void rainbow(uint8_t wait) {
               for(i=0; i<300; i++) {                     //for all the LEDs
                 strip_a.setPixelColor(i, Wheel((i+j) & 255));  //set each LED a different color in cloud one
               }
-              if (currentMillis - previousMillis >= wait) {
-                  previousMillis = currentMillis;
-                  strip_a.show();  //show the colors that were set in cloud one
-              }
-              //delay(wait);     //pause for the amount of time put into the function
+              strip_a.show();  //show the colors that were set in cloud one
+              delay(wait);     //pause for the amount of time put into the function
           }
       }
   }
@@ -195,20 +152,17 @@ void rainbow(uint8_t wait) {
 
 //Theatre-style crawling lights.
 void theaterChase(uint32_t c, uint8_t wait) {
-  unsigned long currentMillis = millis();
   while(reset != 1){  
     for (int j=0; j<10; j++) {  //do 10 cycles of chasing
       if(reset != 1){
           for (int q=0; q < 20; q++) {
               if(reset != 1){
-                if (currentMillis - previousMillis >= wait) {
-                  previousMillis = currentMillis;
-                  for (int i=0; i < 300; i=i+20) {
-                    strip_a.setPixelColor(i+q, c);    //turn every tenth pixel on
-                  }
-                  strip_a.show();
+                for (int i=0; i < 300; i=i+20) {
+                  strip_a.setPixelColor(i+q, c);    //turn every tenth pixel on
                 }
-                
+                strip_a.show();
+               
+                delay(wait);
                   if(reset != 1){
                     for (int i=0; i < 300; i=i+20) {
                       strip_a.setPixelColor(i+q, 0);        //turn every tenth pixel off
@@ -277,35 +231,24 @@ void nighttime(int twinkle){
        strip_a.show();
     }
     while(reset != 1){
-      unsigned long currentMillis = millis();
-      int wait = 50;
       for(i=1; i<299; i=i+15){ //for every 15th LED
         if(reset != 1){
-            if (currentMillis - previousMillis >= wait) {
-                  previousMillis = currentMillis;
-                  strip_a.setPixelColor((i-1), 255, 255, 255);  //set LEDs white in cloud one
-                  strip_a.show();
-            }
-            if (currentMillis - previousMillis >= wait) {
-              previousMillis = currentMillis;
-              strip_a.setPixelColor(i, 255, 255, 255);  //set LEDs white in cloud one
-              strip_a.show();
-            }
-            if (currentMillis - previousMillis >= twinkle) {
-              previousMillis = currentMillis;
-              strip_a.setPixelColor((i+1), 255, 255, 255);  //set LEDs white in cloud one
-              strip_a.show();
-            }
-            if (currentMillis - previousMillis >= wait) {
-              previousMillis = currentMillis;
-              strip_a.setPixelColor((i-1), 0, 0, 102);  //set LEDs white in cloud one
-              strip_a.show();
-            }
-            if (currentMillis - previousMillis >= wait) {
-              previousMillis = currentMillis;
-              strip_a.setPixelColor(i, 0, 0, 102);  //set LEDs white in cloud one
-              strip_a.show();
-            }
+            strip_a.setPixelColor((i-1), 255, 255, 255);  //set LEDs white in cloud one
+            strip_a.show();
+            delay(50);
+            strip_a.setPixelColor(i, 255, 255, 255);  //set LEDs white in cloud one
+            strip_a.show();
+            delay(50);
+            strip_a.setPixelColor((i+1), 255, 255, 255);  //set LEDs white in cloud one
+            strip_a.show();
+            
+            delay(twinkle);
+            strip_a.setPixelColor((i-1), 0, 0, 102);  //set LEDs white in cloud one
+            strip_a.show();
+            delay(50);
+            strip_a.setPixelColor(i, 0, 0, 102);  //set LEDs white in cloud one
+            strip_a.show();
+            delay(50);
             strip_a.setPixelColor((i+1), 0, 0, 102);  //set LEDs white in cloud one
             strip_a.show();
         }
