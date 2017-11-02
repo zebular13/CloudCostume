@@ -4,15 +4,9 @@
 
 byte PINA = 6; //Cloud one Data input pin hooked up to pin 6
 
-
-byte BUTTON_PIN = 3;    // Digital IO pin connected to the button.  This will be
-// driven with a pull-up resistor so the switch should
-// pull the pin to ground momentarily.  On a high -> low
-// transition the button press logic will execute.
+byte BUTTON_PIN = 3;   
 
 byte POT_PIN = 7;
-
-int reading = 0; //set the potentiometer value to zero
 
 unsigned long previousMillis = 0;
 const long interval = 100;
@@ -51,12 +45,12 @@ void setup() {
 }
 
 void loop() {
-  
+
   debouncer.update();
   int value = debouncer.read();
   Serial.println(value);
   if ( debouncer.fell() ) {
-    
+
     ledState = !ledState;
     showType = showType + 1;
     if (showType > 8) {
@@ -64,90 +58,80 @@ void loop() {
     }
     startShow(showType);
   }
-  
+
 }
 
 void startShow(int L) {
   switch (L) {
     case 0: clearCloud();  // Function turns all the LEDs in the clouds off
       break;
-    case 1: blueSky();     // Function that sets the clouds blue
+    case 1: blueSky();     // Function that sets the clouds blue - why is this green?
       break;
     case 2: nighttime(400); //Function that sets the clouds to a dark blue color
       break;
     case 3: clearCloud();
       theaterChase(strip_a.Color(127, 127, 127), 100);
-      // Function that makes a white theatre crawl type lighting siduation
+      // Function that makes a white theatre crawl type lighting siduation - makes white dots
       break;
-    case 4: rainbow(20);  // Function that slowly scrolls ranbows actross the clouds
+    case 4: rainbow(20);  // Function that slowly scrolls ranbows actross the clouds - it's actually just red
       break;
-    case 5: sunSet();    // Function that sets the clouds red/orange/yellow
+    case 5: sunSet();    // Function that sets the clouds red/orange/yellow - just darker red
       break;
     case 6: clearCloud();
-      theaterChase(strip_a.Color(  0,   0, 127), 50); // Blue
+      theaterChase(strip_a.Color(  0,   0, 127), 50); // Blue dots
       break;
     case 7: clearCloud();
-      lightningStorm();  // Function that makes what looks like a lightning storm
+      lightningStorm();  // Function that makes what looks like a lightning storm - actually just white
       break;
-    case 8: whiteClouds(); // Function that sets the clouds white
+    case 8: whiteClouds(); // Function that sets the clouds white - wait - these are orange?d
       break;
   }
 }
 
 void colorWheel(int Red, int Green, int Blue) {
-  
-    for (i = 0; i < 300; i++) {
-      strip_a.setPixelColor(i, Red, Green, Blue);  ;
-    }
-    strip_a.show();  //show the colors that were set in cloud one
-  
+
+  for (i = 0; i < 300; i++) {
+    strip_a.setPixelColor(i, Red, Green, Blue);  ;
+  }
+  strip_a.show();  //show the colors that were set in cloud one
 }
 
 
 //Rainbow function:
 void rainbow(uint8_t wait) {
   unsigned long currentMillis = millis();
-  
-    uint16_t i, j;
-    for (j = 0; j < 256; j++) {                  //for 256 colors
-      
-        for (i = 0; i < 300; i++) {                //for all the LEDs
-          strip_a.setPixelColor(i, Wheel((i + j) & 255)); //set each LED a different color in cloud one
-        }
-        if (currentMillis - previousMillis >= wait) {
-          previousMillis = currentMillis;
-          strip_a.show();  //show the colors that were set in cloud one
-        }
-        
-      
+
+  uint16_t i, j;
+  for (j = 0; j < 256; j++) {                  //for 256 colors
+
+    for (i = 0; i < 300; i++) {                //for all the LEDs
+      strip_a.setPixelColor(i, Wheel((i + j) & 255)); //set each LED a different color in cloud one
     }
-  
+    if (currentMillis - previousMillis >= wait) {
+      previousMillis = currentMillis;
+      strip_a.show();  //show the colors that were set in cloud one
+    }
+  }
 }
 
 //Theatre-style crawling lights.
 void theaterChase(uint32_t c, uint8_t wait) {
   unsigned long currentMillis = millis();
-  
-    for (int j = 0; j < 10; j++) { //do 10 cycles of chasing
+  if (currentMillis - previousMillis >= wait) {
+        previousMillis = currentMillis;
+        for (int j = 0; j < 10; j++) { //do 10 cycles of chasing
       
-        for (int q = 0; q < 20; q++) {
-         
-            if (currentMillis - previousMillis >= wait) {
-              previousMillis = currentMillis;
-              for (int i = 0; i < 300; i = i + 20) {
-                strip_a.setPixelColor(i + q, c);  //turn every tenth pixel on
-              }
-              strip_a.show();
-            }
-
-            
-              for (int i = 0; i < 300; i = i + 20) {
-                strip_a.setPixelColor(i + q, 0);      //turn every tenth pixel off
-              }
-            
-          
-        
+          for (int q = 0; q < 20; q++) {
       
+            
+          for (int i = 0; i < 300; i = i + 20) {
+            strip_a.setPixelColor(i + q, c);  //turn every tenth pixel on
+          }
+          strip_a.show();
+          for (int i = 0; i < 300; i = i + 20) {
+            strip_a.setPixelColor(i + q, 0);      //turn every tenth pixel off
+        }
+      }
     }
   }
 }
@@ -169,77 +153,74 @@ uint32_t Wheel(byte WheelPos) {
 
 //Bluesky function:
 void blueSky() {
- 
-    for (i = 0; i < 300; i++) { //for all of the LEDs
-      strip_a.setPixelColor(i, 0, 170, 175);   //set LEDs a sky blue color in cloud one
-    }
-    strip_a.show();
-  
+
+  for (i = 0; i < 300; i++) { //for all of the LEDs
+    strip_a.setPixelColor(i, 0, 170, 175);   //set LEDs a sky blue color in cloud one
+  }
+  strip_a.show();
+
 }
 
 //White clouds function
 void whiteClouds() {
- 
-    for (i = 0; i < 300; i++) { //for all of the LEDs
-      strip_a.setPixelColor(i, 100, 100, 100);  //set LEDs white-ish in cloud one
-    }
-    strip_a.show();
-  
+
+  for (i = 0; i < 300; i++) { //for all of the LEDs
+    strip_a.setPixelColor(i, 100, 100, 100);  //set LEDs white-ish in cloud one
+  }
+  strip_a.show();
+
 }
 
 
 //Overcast funtion:
 void overcast() {
-  
-    for (i = 0; i < 300; i++) { //for all of the LEDs
-      strip_a.setPixelColor(i, 70, 64, 75);  //set LEDs grey-ish in cloud one
-    }
-    strip_a.show();
-  
+
+  for (i = 0; i < 300; i++) { //for all of the LEDs
+    strip_a.setPixelColor(i, 70, 64, 75);  //set LEDs grey-ish in cloud one
+  }
+  strip_a.show();
+
 }
 
 
 //Storm cloud function:
 void nighttime(int twinkle) {
-  
-    for (i = 0; i < 300; i++) { //for all of the LEDs
-      strip_a.setPixelColor(i, 0, 0, 102);  //set LEDs dark blue in cloud one
+  unsigned long currentMillis = millis();
+  int wait = 50;
+  for (i = 0; i < 300; i++) { //for all of the LEDs
+    strip_a.setPixelColor(i, 0, 0, 102);  //set LEDs dark blue in cloud one
+  }
+  strip_a.show();
+
+    if (currentMillis - previousMillis >= wait) {
+      previousMillis = currentMillis;
+      for (i = 1; i < 299; i = i + 15) { //for every 15th LED
+      strip_a.setPixelColor((i - 1), 255, 255, 255); //set LEDs white in cloud one
+      strip_a.show();
     }
+    if (currentMillis - previousMillis >= wait) {
+      previousMillis = currentMillis;
+      strip_a.setPixelColor(i, 255, 255, 255);  //set LEDs white in cloud one
+      strip_a.show();
+    }
+    if (currentMillis - previousMillis >= twinkle) {
+      previousMillis = currentMillis;
+      strip_a.setPixelColor((i + 1), 255, 255, 255); //set LEDs white in cloud one
+      strip_a.show();
+    }
+    if (currentMillis - previousMillis >= wait) {
+      previousMillis = currentMillis;
+      strip_a.setPixelColor((i - 1), 0, 0, 102); //set LEDs white in cloud one
+      strip_a.show();
+    }
+    if (currentMillis - previousMillis >= wait) {
+      previousMillis = currentMillis;
+      strip_a.setPixelColor(i, 0, 0, 102);  //set LEDs white in cloud one
+      strip_a.show();
+    }
+    strip_a.setPixelColor((i + 1), 0, 0, 102); //set LEDs white in cloud one
     strip_a.show();
- 
- 
-    unsigned long currentMillis = millis();
-    int wait = 50;
-    for (i = 1; i < 299; i = i + 15) { //for every 15th LED
-     
-        if (currentMillis - previousMillis >= wait) {
-          previousMillis = currentMillis;
-          strip_a.setPixelColor((i - 1), 255, 255, 255); //set LEDs white in cloud one
-          strip_a.show();
-        }
-        if (currentMillis - previousMillis >= wait) {
-          previousMillis = currentMillis;
-          strip_a.setPixelColor(i, 255, 255, 255);  //set LEDs white in cloud one
-          strip_a.show();
-        }
-        if (currentMillis - previousMillis >= twinkle) {
-          previousMillis = currentMillis;
-          strip_a.setPixelColor((i + 1), 255, 255, 255); //set LEDs white in cloud one
-          strip_a.show();
-        }
-        if (currentMillis - previousMillis >= wait) {
-          previousMillis = currentMillis;
-          strip_a.setPixelColor((i - 1), 0, 0, 102); //set LEDs white in cloud one
-          strip_a.show();
-        }
-        if (currentMillis - previousMillis >= wait) {
-          previousMillis = currentMillis;
-          strip_a.setPixelColor(i, 0, 0, 102);  //set LEDs white in cloud one
-          strip_a.show();
-        }
-        strip_a.setPixelColor((i + 1), 0, 0, 102); //set LEDs white in cloud one
-        strip_a.show();
-      
+
   }
 }
 
@@ -247,32 +228,32 @@ void nighttime(int twinkle) {
 
 //Sun set function:
 void sunSet() {
-  
-    for (i = 0; i < 100; i++) { //for the first 100 LEDs
-      strip_a.setPixelColor(i, 150, 20, 0);   //set LEDs red-ish in cloud one
-    }
-    for (i = 101; i < 150; i++) { //for LEDs 101 to 150
-      strip_a.setPixelColor(i, 150, 90, 0);  //set LEDs orange-red in cloud one
-    }
-    for (i = 151; i < 250; i++) { //for LEDs 151 to 250
-      strip_a.setPixelColor(i, 150, 50, 0);  //set LEDs red-orage in cloud one
-    }
-    for (i = 251; i < 260; i++) { //for LEDs 251 to 260
-      strip_a.setPixelColor(i, 150, 50, 0);  //set LEDs red-orage in cloud one
-    }
-    for (i = 261; i < 300; i++) { //for LEDs 261 to the last LED
-      strip_a.setPixelColor(i, Wheel(((i * 256 / 300)) & 255));  //set LEDs to the first part of the color wheel (red-yellow) in cloud one
-    }
-    strip_a.show(); //show all the colors that were set in cloud one
-  
+
+  for (i = 0; i < 100; i++) { //for the first 100 LEDs
+    strip_a.setPixelColor(i, 150, 20, 0);   //set LEDs red-ish in cloud one
+  }
+  for (i = 101; i < 150; i++) { //for LEDs 101 to 150
+    strip_a.setPixelColor(i, 150, 90, 0);  //set LEDs orange-red in cloud one
+  }
+  for (i = 151; i < 250; i++) { //for LEDs 151 to 250
+    strip_a.setPixelColor(i, 150, 50, 0);  //set LEDs red-orage in cloud one
+  }
+  for (i = 251; i < 260; i++) { //for LEDs 251 to 260
+    strip_a.setPixelColor(i, 150, 50, 0);  //set LEDs red-orage in cloud one
+  }
+  for (i = 261; i < 300; i++) { //for LEDs 261 to the last LED
+    strip_a.setPixelColor(i, Wheel(((i * 256 / 300)) & 255));  //set LEDs to the first part of the color wheel (red-yellow) in cloud one
+  }
+  strip_a.show(); //show all the colors that were set in cloud one
+
 }
 
 //Clear cloud function:
 void clearCloud() {
 
-    for (i = 0; i < 300; i++) { //for all the LEDs
-      strip_a.setPixelColor(i, 0, 0, 0); //turn off in cloud one
-    
+  for (i = 0; i < 300; i++) { //for all the LEDs
+    strip_a.setPixelColor(i, 0, 0, 0); //turn off in cloud one
+
 
     strip_a.show(); //show what was set in cloud one
   }
@@ -280,73 +261,73 @@ void clearCloud() {
 
 //lightning storm function:
 void lightningStorm() {
-    //Various types of lightning functions, where the first two
-    //numbers represent the area that the flash could randomly show
-    //up in, the next number is usually how long the flash is (in milisec)
-    //the forth number is sometimes the size of the flash, and the
-    //last is the color setting for the flash:
-    
-      jumpingFlash_a(50, 80, 50, strip_a.Color(255, 255, 255));
-    
-  
-      scrollingFlash_a(20, 65, 50, 5, strip_a.Color(255, 255, 255));
-    
-   
-      singleFlash_a(100, 200, 50, 15, strip_a.Color(255, 255, 255));
-    
-   
-      singleFlash_a(50, 100, 50, 5, strip_a.Color(200, 200, 255));
-    
-   
-      scrollingFlash_a(200, 250, 50, 15, strip_a.Color(255, 255, 255));
-    
-  
-      jumpingFlash_a(100, 130, 50, strip_a.Color(255, 255, 255));
-    
-   
-      multipleFlashs_a(20, 125, 150, 300, 50, 5, strip_a.Color(255, 255, 255));
-   
-      scrollingFlash_a(10, 60, 100, 15, strip_a.Color(225, 200, 255));
-    
-   
-      flickerFlash_a(75, 175, 40, 25, strip_a.Color(255, 255, 255));
-    
-   
-      jumpingFlash_a(200, 130, 50, strip_a.Color(255, 255, 255));
-    
+  //Various types of lightning functions, where the first two
+  //numbers represent the area that the flash could randomly show
+  //up in, the next number is usually how long the flash is (in milisec)
+  //the forth number is sometimes the size of the flash, and the
+  //last is the color setting for the flash:
 
-      flickerFlash_a(50, 300, 50, 25, strip_a.Color(200, 200, 255));
-    
-   
-      scrollingFlash_a(200, 250, 100, 10, strip_a.Color(255, 255, 255));
-    
-    
-      multipleFlashs_a(20, 125, 175, 300, 50, 5, strip_a.Color(255, 255, 255));
+  jumpingFlash_a(50, 80, 50, strip_a.Color(255, 255, 255));
 
-      scrollingFlash_a(20, 65, 50, 3, strip_a.Color(255, 255, 255));
 
-      singleFlash_a(75, 175, 40, 3, strip_a.Color(255, 255, 255));
+  scrollingFlash_a(20, 65, 50, 5, strip_a.Color(255, 255, 255));
 
-      singleFlash_a(100, 200, 50, 30, strip_a.Color(255, 255, 255));
 
-      scrollingFlash_a(200, 500, 50, 15, strip_a.Color(255, 255, 255));
+  singleFlash_a(100, 200, 50, 15, strip_a.Color(255, 255, 255));
 
-      jumpingFlash_a(250, 300, 50, strip_a.Color(255, 255, 255));
 
-      multipleFlashs_a(20, 125, 200, 300, 50, 5, strip_a.Color(255, 255, 255));
+  singleFlash_a(50, 100, 50, 5, strip_a.Color(200, 200, 255));
 
-      singleFlash_a(75, 175, 40, 3, strip_a.Color(255, 255, 255));
 
-      jumpingFlash_a(150, 180, 50, strip_a.Color(255, 255, 255));
+  scrollingFlash_a(200, 250, 50, 15, strip_a.Color(255, 255, 255));
 
-      jumpingFlash_a(50, 80, 50, strip_a.Color(255, 255, 255));
 
-      flickerFlash_a(0, 100, 50, 50, strip_a.Color(200, 200, 255));
+  jumpingFlash_a(100, 130, 50, strip_a.Color(255, 255, 255));
 
-      multipleFlashs_a(20, 125, 150, 300, 50, 5, strip_a.Color(200, 200, 255));
-  
-      wholeCloudFlash_a(40, 100, strip_a.Color(255, 255, 255));
-    
+
+  multipleFlashs_a(20, 125, 150, 300, 50, 5, strip_a.Color(255, 255, 255));
+
+  scrollingFlash_a(10, 60, 100, 15, strip_a.Color(225, 200, 255));
+
+
+  flickerFlash_a(75, 175, 40, 25, strip_a.Color(255, 255, 255));
+
+
+  jumpingFlash_a(200, 130, 50, strip_a.Color(255, 255, 255));
+
+
+  flickerFlash_a(50, 300, 50, 25, strip_a.Color(200, 200, 255));
+
+
+  scrollingFlash_a(200, 250, 100, 10, strip_a.Color(255, 255, 255));
+
+
+  multipleFlashs_a(20, 125, 175, 300, 50, 5, strip_a.Color(255, 255, 255));
+
+  scrollingFlash_a(20, 65, 50, 3, strip_a.Color(255, 255, 255));
+
+  singleFlash_a(75, 175, 40, 3, strip_a.Color(255, 255, 255));
+
+  singleFlash_a(100, 200, 50, 30, strip_a.Color(255, 255, 255));
+
+  scrollingFlash_a(200, 500, 50, 15, strip_a.Color(255, 255, 255));
+
+  jumpingFlash_a(250, 300, 50, strip_a.Color(255, 255, 255));
+
+  multipleFlashs_a(20, 125, 200, 300, 50, 5, strip_a.Color(255, 255, 255));
+
+  singleFlash_a(75, 175, 40, 3, strip_a.Color(255, 255, 255));
+
+  jumpingFlash_a(150, 180, 50, strip_a.Color(255, 255, 255));
+
+  jumpingFlash_a(50, 80, 50, strip_a.Color(255, 255, 255));
+
+  flickerFlash_a(0, 100, 50, 50, strip_a.Color(200, 200, 255));
+
+  multipleFlashs_a(20, 125, 150, 300, 50, 5, strip_a.Color(200, 200, 255));
+
+  wholeCloudFlash_a(40, 100, strip_a.Color(255, 255, 255));
+
 }
 
 
