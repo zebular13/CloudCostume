@@ -72,7 +72,7 @@ void startShow(int L) {
       theaterChase(strip_a.Color(127, 127, 127), 100);
       // Function that makes a white theatre crawl type lighting siduation - makes white dots
       break;
-    case 4: 
+    case 4:
       rainbow(50);  // Function that slowly scrolls ranbows actross the clouds - it's actually just red and green
       break;
     case 5: sunSet();    // Function that sets the clouds red/orange/yellow - just darker red
@@ -181,74 +181,83 @@ void overcast() {
 }
 
 
-//Starry night 
+//Starry night
 void nighttime(int twinkle) {
-    
+  int patternNumber = 0;
   unsigned long currentMillis = millis();
   int wait = 50;
-  int running = 0;
-  if (running == 0) {
-    for (i=0; i<300; i++) {    //for all of the LEDs 
-       strip_a.setPixelColor(i, 0, 0, 102);  //set LEDs dark blue in cloud one
-       strip_a.show();
-     }
+  twinkle = 0;
+  if ((twinkle == 0) && (currentMillis - previousMillis >= wait )) {
+    previousMillis = currentMillis;
+    if (patternNumber > 5) {
+      patternNumber = 0;
+      twinkle = 1;
+    }
+    twinklePattern(patternNumber);
   }
-  
-  while (running == 0) {
-    if (currentMillis - previousMillis >= wait) {
-          previousMillis = currentMillis;  
-               for(i=1; i<299; i=i+15) { //for every 15th LED 
-                  strip_a.setPixelColor((i - 1), 255, 255, 255); //set LEDs white in cloud one
-                  strip_a.show();
-                  
-               }
-             
-         }
-    else if (currentMillis - previousMillis >= wait*2) {
-            previousMillis = currentMillis;
-               for(i=1; i<299; i=i+15) { //for every 15th LED 
-                strip_a.setPixelColor(i, 255, 255, 255);  //set LEDs white in cloud one
-                strip_a.show();
-                
-               }
-            
-          }
-    else if (currentMillis - previousMillis >= twinkle) {
-            previousMillis = currentMillis;
-              for(i=1; i<299; i=i+15) { //for every 15th LED 
-                strip_a.setPixelColor((i + 1), 255, 255, 255); //set LEDs white in cloud one
-                strip_a.show();
-               
-              }
-          }
-     else if (currentMillis - previousMillis >= wait*3) {
-            previousMillis = currentMillis;
-         
-              strip_a.setPixelColor((i - 1), 0, 0, 102); //set LEDs white in cloud one
-              strip_a.show();
-      
-            
-          }
-     else if (currentMillis - previousMillis >= wait*4) {
-            previousMillis = currentMillis;
-           
-              strip_a.setPixelColor(i, 0, 0, 102);  //set LEDs white in cloud one
-              strip_a.show();
-             
-      }
-      else if (currentMillis - previousMillis >= wait*5) {
-           previousMillis = 0;
-           currentMillis = 0;
-         
-              strip_a.setPixelColor((i + 1), 0, 0, 102); //set LEDs white in cloud one
-              strip_a.show();
-             
-          
-          }
-   }
 }
 
-  
+void twinklePattern(int patternNumber) {
+  switch (patternNumber) {
+  case 0:
+    for (i = 0; i < 300; i++) { //for all of the LEDs
+      strip_a.setPixelColor(i, 0, 0, 102);  //set LEDs dark blue in cloud one
+    }
+    strip_a.show();
+    for (i = 1; i < 299; i = i + 15) { //for every 15th LED
+      strip_a.setPixelColor((i - 1), 255, 255, 255); //set LEDs white in cloud one
+      strip_a.show();
+    }
+  case 1:
+    for (i = 0; i < 300; i++) { //for all of the LEDs
+      strip_a.setPixelColor(i, 0, 0, 102);  //set LEDs dark blue in cloud one
+    }
+    strip_a.show();
+    for (i = 1; i < 299; i = i + 15) {
+      strip_a.setPixelColor(i, 255, 255, 255);  //set LEDs white in cloud one
+      strip_a.show();
+    }
+  case 2:
+    for (i = 0; i < 300; i++) { //for all of the LEDs
+      strip_a.setPixelColor(i, 0, 0, 102);  //set LEDs dark blue in cloud one
+    }
+    strip_a.show();
+    for (i = 1; i < 299; i = i + 15) {
+      strip_a.setPixelColor((i + 1), 255, 255, 255); //set LEDs white in cloud one
+      strip_a.show();
+    }
+  case 3:
+    //delay(twinkle);
+    for (i = 0; i < 300; i++) { //for all of the LEDs
+      strip_a.setPixelColor(i, 0, 0, 102);  //set LEDs dark blue in cloud one
+    }
+    strip_a.show();
+    for (i = 1; i < 299; i = i + 15) {
+      strip_a.setPixelColor((i - 1), 0, 0, 102); //set LEDs white in cloud one
+      strip_a.show();
+    }
+  case 4:
+    for (i = 0; i < 300; i++) { //for all of the LEDs
+      strip_a.setPixelColor(i, 0, 0, 102);  //set LEDs dark blue in cloud one
+    }
+    strip_a.show();
+    for (i = 1; i < 299; i = i + 15) {
+      strip_a.setPixelColor(i, 0, 0, 102);  //set LEDs white in cloud one
+      strip_a.show();
+    }
+  case 5:
+    for (i = 0; i < 300; i++) { //for all of the LEDs
+      strip_a.setPixelColor(i, 0, 0, 102);  //set LEDs dark blue in cloud one
+    }
+    strip_a.show();
+    for (i = 1; i < 299; i = i + 15) {
+      strip_a.setPixelColor((i + 1), 0, 0, 102); //set LEDs white in cloud one
+      strip_a.show();
+    }
+  }
+}
+
+
 //Sunset function:
 void sunSet() {
 
@@ -273,9 +282,9 @@ void sunSet() {
 //Clear cloud function:
 void clearCloud() {
 
-    for (i = 0; i < 300; i++) { //for all the LEDs
-      strip_a.setPixelColor(i, 0, 0, 0); //turn off in cloud one
-    
+  for (i = 0; i < 300; i++) { //for all the LEDs
+    strip_a.setPixelColor(i, 0, 0, 0); //turn off in cloud one
+
 
     strip_a.show(); //show what was set in cloud one
   }
@@ -283,77 +292,38 @@ void clearCloud() {
 
 //lightning storm function:
 void lightningStorm() {
-    //Various types of lightning functions, where the first two
-    //numbers represent the area that the flash could randomly show
-    //up in, the next number is usually how long the flash is (in milisec)
-    //the forth number is sometimes the size of the flash, and the
-    //last is the color setting for the flash:
-    
-      jumpingFlash_a(50, 80, 50, strip_a.Color(255, 255, 255)); //white
-    
-      scrollingFlash_a(20, 65, 50, 5, strip_a.Color(0, 255, 0)); //green
+  //Various types of lightning functions, where the first two
+  //numbers represent the area that the flash could randomly show
+  //up in, the next number is usually how long the flash is (in milisec)
+  //the forth number is sometimes the size of the flash, and the
+  //last is the color setting for the flash:
+  byte reset = 0;
+     if(reset != 1){jumpingFlash_a(50, 80, 50, strip_a.Color(255,255,255));}
+      if(reset != 1){scrollingFlash_a(20, 65, 50, 5, strip_a.Color(255,255,255));}
+      if(reset != 1){singleFlash_a(100, 200, 50, 15, strip_a.Color(255,255,255));}
+      if(reset != 1){singleFlash_a(50, 100, 50, 5, strip_a.Color(200,200,255));}
+      if(reset != 1){scrollingFlash_a(200, 250, 50, 15, strip_a.Color(255,255,255));}
+      if(reset != 1){jumpingFlash_a(100, 130, 50, strip_a.Color(255,255,255));}
+      if(reset != 1){multipleFlashs_a(20, 125, 150, 300, 50, 5, strip_a.Color(255,255,255));}
+      if(reset != 1){scrollingFlash_a(10, 60, 100, 15, strip_a.Color(225,200,255));}
+      if(reset != 1){flickerFlash_a(75, 175, 40, 25, strip_a.Color(255,255,255));}
+      if(reset != 1){jumpingFlash_a(200, 130, 50, strip_a.Color(255,255,255));}
+      if(reset != 1){flickerFlash_a(50, 300, 50, 25, strip_a.Color(200,200,255));}
+      if(reset != 1){scrollingFlash_a(200, 250, 100, 10, strip_a.Color(255,255,255));}
+      if(reset != 1){multipleFlashs_a(20, 125, 175, 300, 50, 5, strip_a.Color(255,255,255));}
+      if(reset != 1){scrollingFlash_a(20, 65, 50, 3, strip_a.Color(255,255,255));}
+      if(reset != 1){singleFlash_a(75, 175, 40, 3, strip_a.Color(255,255,255));}
+      if(reset != 1){singleFlash_a(100, 200, 50, 30, strip_a.Color(255,255,255));}
+      if(reset != 1){scrollingFlash_a(200, 500, 50, 15, strip_a.Color(255,255,255));}
+      if(reset != 1){jumpingFlash_a(250, 300, 50, strip_a.Color(255,255,255));}
+      if(reset != 1){multipleFlashs_a(20, 125, 200, 300, 50, 5, strip_a.Color(255,255,255));}
+      if(reset != 1){singleFlash_a(75, 175, 40, 3, strip_a.Color(255,255,255));}
+      if(reset != 1){jumpingFlash_a(150, 180, 50, strip_a.Color(255,255,255));}
+      if(reset != 1){jumpingFlash_a(50, 80, 50, strip_a.Color(255,255,255));}
+      if(reset != 1){flickerFlash_a(0, 100, 50, 50, strip_a.Color(200,200,255));}
+      if(reset != 1){multipleFlashs_a(20, 125, 150, 300, 50, 5, strip_a.Color(200,200,255));}
+      if(reset != 1){wholeCloudFlash_a(40, 100, strip_a.Color(255,255,255));}
 
-      jumpingFlash_a(50, 80, 50, strip_a.Color(255, 255, 255)); //white
-      
-      jumpingFlash_a(50, 80, 50, strip_a.Color(255, 255, 255)); //white
-    
-      scrollingFlash_a(20, 65, 50, 5, strip_a.Color(0, 255, 0)); //green
-   
-      singleFlash_a(100, 200, 50, 15, strip_a.Color(255, 255, 255)); //white
-    
-
-      singleFlash_a(50, 100, 50, 5, strip_a.Color(200, 0, 0)); //red
-    
-   
-      scrollingFlash_a(200, 250, 50, 15, strip_a.Color(255, 0, 255)); //purple
-    
-  
-      jumpingFlash_a(100, 130, 50, strip_a.Color(255, 255, 255));
-    
-   
-      multipleFlashs_a(20, 125, 150, 300, 50, 5, strip_a.Color(255, 255, 255));
-   
-      scrollingFlash_a(10, 60, 100, 15, strip_a.Color(225, 200, 255));
-    
-   
-      flickerFlash_a(75, 175, 40, 25, strip_a.Color(255, 255, 255));
-    
-   
-      jumpingFlash_a(200, 130, 50, strip_a.Color(255, 255, 255));
-    
-
-      flickerFlash_a(50, 300, 50, 25, strip_a.Color(200, 200, 255));
-    
-   
-      scrollingFlash_a(200, 250, 100, 10, strip_a.Color(255, 255, 255));
-    
-    
-      multipleFlashs_a(20, 125, 175, 300, 50, 5, strip_a.Color(255, 255, 255));
-
-      scrollingFlash_a(20, 65, 50, 3, strip_a.Color(255, 255, 255));
-
-      singleFlash_a(75, 175, 40, 3, strip_a.Color(255, 255, 255));
-
-      singleFlash_a(100, 200, 50, 30, strip_a.Color(255, 255, 255));
-
-      scrollingFlash_a(200, 500, 50, 15, strip_a.Color(255, 255, 255));
-
-      jumpingFlash_a(250, 300, 50, strip_a.Color(255, 255, 255));
-
-      multipleFlashs_a(20, 125, 200, 300, 50, 5, strip_a.Color(255, 255, 255));
-
-      singleFlash_a(75, 175, 40, 3, strip_a.Color(255, 255, 255));
-
-      jumpingFlash_a(150, 180, 50, strip_a.Color(255, 255, 255));
-
-      jumpingFlash_a(50, 80, 50, strip_a.Color(255, 255, 255));
-
-      flickerFlash_a(0, 100, 50, 50, strip_a.Color(200, 200, 255));
-
-      multipleFlashs_a(20, 125, 150, 300, 50, 5, strip_a.Color(200, 200, 255));
-  
-      wholeCloudFlash_a(40, 100, strip_a.Color(255, 255, 255));
-    
 }
 
 
@@ -488,14 +458,14 @@ void jumpingFlash_a(int areaStart, int areaEnd, int duration, uint32_t color) {
   int i;
   unsigned long currentMillis = millis();
   int waitTime = random(100, 600);
-  
+
   if (currentMillis - previousMillis >= duration) {
     previousMillis = currentMillis;
     for (i = areaStart; (i < areaStart + 15); i++) {
       strip_a.setPixelColor(i, color);
     }
     strip_a.show();
- 
+
     for (i = areaStart; (i < areaStart + 15); i++) {
       strip_a.setPixelColor(i, 0, 0, 0);
       strip_a.show();
@@ -504,8 +474,8 @@ void jumpingFlash_a(int areaStart, int areaEnd, int duration, uint32_t color) {
       strip_a.setPixelColor(i, color);
     }
     strip_a.show();
-  
-  
+
+
     for ((i = areaEnd - 15); i < areaEnd; i++) {
       strip_a.setPixelColor(i, 0, 0, 0);
     }
@@ -515,7 +485,7 @@ void jumpingFlash_a(int areaStart, int areaEnd, int duration, uint32_t color) {
       strip_a.setPixelColor(i, color);
     }
     strip_a.show();
-  
+
     for ((i = areaEnd - 15); i < areaEnd; i++) {
       strip_a.setPixelColor(i, 0, 0, 0);
       strip_a.show();
@@ -533,7 +503,7 @@ void wholeCloudFlash_a(int durationShort, int durationLong, uint32_t color) {
       strip_a.setPixelColor(i, color);
     }
     strip_a.show();
- 
+
     for (i = 60; i < 75; i++) {
       strip_a.setPixelColor(i, 0, 0, 0);
     }
@@ -559,7 +529,7 @@ void wholeCloudFlash_a(int durationShort, int durationLong, uint32_t color) {
       strip_a.setPixelColor(i, color);
       strip_a.show();
     }
- 
+
     for (i = 100; i < 115; i++) {
       strip_a.setPixelColor(i, 0, 0, 0);
       strip_a.show();
@@ -568,18 +538,18 @@ void wholeCloudFlash_a(int durationShort, int durationLong, uint32_t color) {
       strip_a.setPixelColor(i, color);
     }
     strip_a.show();
-  
+
     for (i = 115; i < 130; i++) {
       strip_a.setPixelColor(i, 0, 0, 0);
     }
     strip_a.show();
-  
+
     for (i = 115; i < 130; i++) {
       strip_a.setPixelColor(i, color);
     }
     strip_a.show();
 
-  
+
     for (i = 115; i < 130; i++) {
       strip_a.setPixelColor(i, 0, 0, 0);
       strip_a.show();
@@ -588,17 +558,17 @@ void wholeCloudFlash_a(int durationShort, int durationLong, uint32_t color) {
       strip_a.setPixelColor(i, color);
     }
     strip_a.show();
-  
+
     for (i = 130; i < 150; i++) {
       strip_a.setPixelColor(i, 0, 0, 0);
     }
     strip_a.show();
-  
+
     for (i = 130; i < 150; i++) {
       strip_a.setPixelColor(i, color);
     }
     strip_a.show();
-  
+
     for (i = 130; i < 150; i++) {
       strip_a.setPixelColor(i, 0, 0, 0);
       strip_a.show();
